@@ -2,10 +2,20 @@ import axios from 'axios';
 import Logger from '@/utils/Logger';
 
 const subscribers: Record<string, string[]> = {};
+const eventsEmitted: Array<{
+	event: string;
+	payload: object;
+	destination: string[];
+	timestamp: number;
+}> = [];
 
 export default class EventBus {
 	public static subscribers() {
 		return subscribers;
+	}
+
+	public static eventsEmitted() {
+		return eventsEmitted;
 	}
 
 	public static subscribe(event: string, webhook: string) {
@@ -25,6 +35,8 @@ export default class EventBus {
 			return false;
 		}
 
+		const webhooks: string[] = [];
+
 		await Promise.all(
 			subscribers[event].map(async webhook => {
 				try {
@@ -32,11 +44,20 @@ export default class EventBus {
 						event,
 						payload,
 					});
+
+					webhooks.push(webhook);
 				} catch (err) {
 					Logger.getInstance().logger.error(err);
 				}
 			})
 		);
+
+		eventsEmitted.push({
+			event,
+			payload,
+			destination: webhooks,
+			timestamp: Math.floor(Date.now() / 1000),
+		});
 
 		return true;
 	}

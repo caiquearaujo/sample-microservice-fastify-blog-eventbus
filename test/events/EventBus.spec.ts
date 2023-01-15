@@ -29,6 +29,10 @@ describe('Event Bus', () => {
 		expect(response).toBe(false);
 	});
 
+	it('no event should have been emitted', () => {
+		expect(EventBus.eventsEmitted()).toHaveLength(0);
+	});
+
 	it('should be able to emit an event', async () => {
 		EventBus.subscribe('test.event', 'http://localhost:3001');
 
@@ -55,6 +59,16 @@ describe('Event Bus', () => {
 		);
 
 		expect(mockedAxios.post).toHaveBeenCalledTimes(2);
+	});
+
+	it('should have been emitted one event with two webhooks', () => {
+		expect(EventBus.eventsEmitted()).toHaveLength(1);
+		expect(EventBus.eventsEmitted()[0]).toStrictEqual({
+			event: 'test.event',
+			payload: { test: 'test' },
+			destination: ['http://localhost:3000', 'http://localhost:3001'],
+			timestamp: expect.any(Number),
+		});
 	});
 
 	it('should not emit an event if there are no subscribers', async () => {
