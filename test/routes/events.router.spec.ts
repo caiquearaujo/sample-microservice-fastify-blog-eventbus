@@ -19,6 +19,7 @@ beforeAll(async () => {
 
 	EventBus.emit = jest.fn();
 	EventBus.subscribe = jest.fn();
+	EventBus.uncaughtEvents = jest.fn();
 });
 
 describe('Events Routes', () => {
@@ -71,5 +72,23 @@ describe('Events Routes', () => {
 		);
 
 		expect(mockedEventBus.subscribe).toHaveBeenCalledTimes(2);
+	});
+
+	it('POST /events/uncaught -> should return uncaught events', async () => {
+		const response = await app.inject({
+			method: 'POST',
+			url: '/events/uncaught',
+			payload: {
+				events: ['test.event'],
+				webhook: 'http://localhost:3003',
+			},
+		});
+
+		expect(response.statusCode).toBe(200);
+
+		expect(mockedEventBus.uncaughtEvents).toHaveBeenCalledWith(
+			['test.event'],
+			'http://localhost:3003'
+		);
 	});
 });

@@ -26,4 +26,11 @@ const subscribe: TFnApplyToFastify = async (app: FastifyInstance) => {
 		});
 	});
 };
-export { emit, subscribe };
+
+const uncaught: TFnApplyToFastify = async (app: FastifyInstance) => {
+	app.post('/events/uncaught', (request, reply) => {
+		const { events, webhook } = request.body as any;
+		reply.send(EventBus.uncaughtEvents(events, webhook));
+	});
+};
+export { emit, subscribe, uncaught };

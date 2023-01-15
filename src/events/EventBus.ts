@@ -18,6 +18,36 @@ export default class EventBus {
 		return eventsEmitted;
 	}
 
+	public static uncaughtEvents(
+		expectedEvents: string[],
+		webhook: string
+	) {
+		const uncaughtEvents: Array<{
+			event: string;
+			payload: object;
+			timestamp: number;
+		}> = [];
+
+		eventsEmitted.forEach(event => {
+			if (
+				!expectedEvents.includes(event.event) ||
+				event.destination.includes(webhook)
+			) {
+				return;
+			}
+
+			uncaughtEvents.push({
+				event: event.event,
+				payload: event.payload,
+				timestamp: event.timestamp,
+			});
+
+			event.destination.push(webhook);
+		});
+
+		return uncaughtEvents;
+	}
+
 	public static subscribe(event: string, webhook: string) {
 		if (!subscribers[event]) {
 			subscribers[event] = [];

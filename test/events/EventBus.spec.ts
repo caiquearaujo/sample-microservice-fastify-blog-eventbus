@@ -78,4 +78,29 @@ describe('Event Bus', () => {
 
 		expect(response).toBe(false);
 	});
+
+	it('should get uncaught events', () => {
+		const uncaughtEvents = EventBus.uncaughtEvents(
+			['test.event'],
+			'http://localhost:3003'
+		);
+
+		expect(uncaughtEvents).toHaveLength(1);
+		expect(uncaughtEvents[0]).toStrictEqual({
+			event: 'test.event',
+			payload: { test: 'test' },
+			timestamp: expect.any(Number),
+		});
+
+		expect(EventBus.eventsEmitted()[0]).toStrictEqual({
+			event: 'test.event',
+			payload: { test: 'test' },
+			destination: [
+				'http://localhost:3000',
+				'http://localhost:3001',
+				'http://localhost:3003',
+			],
+			timestamp: expect.any(Number),
+		});
+	});
 });
