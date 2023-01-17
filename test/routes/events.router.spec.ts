@@ -2,7 +2,6 @@ import { FastifyInstance } from 'fastify';
 import ApiServer from '@/server/ApiServer';
 import FastifyApplierGroup from '@/server/FastifyApplierGroup';
 import routes from '@/routes';
-import plugins from '@/server/plugins';
 import EventBus from '@/events/EventBus';
 
 let app: FastifyInstance;
@@ -11,7 +10,7 @@ const mockedEventBus = EventBus as jest.Mocked<typeof EventBus>;
 beforeAll(async () => {
 	const api = new ApiServer({
 		routes: new FastifyApplierGroup(...routes),
-		plugins: new FastifyApplierGroup(...plugins),
+		plugins: new FastifyApplierGroup(),
 	});
 
 	await api.bootstrap();

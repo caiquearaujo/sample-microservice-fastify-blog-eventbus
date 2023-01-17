@@ -49,6 +49,8 @@ export default class EventBus {
 	}
 
 	public static subscribe(event: string, webhook: string) {
+		console.log(`${webhook} has subscribed to ${event}`);
+
 		if (!subscribers[event]) {
 			subscribers[event] = [];
 		}
