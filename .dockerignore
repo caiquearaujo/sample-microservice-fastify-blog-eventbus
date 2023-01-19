@@ -1,0 +1,8 @@
+/node_modules
+.git
+.husky
+.vscode
+/build
+/coverage
+/debug
+*.code-workspace
